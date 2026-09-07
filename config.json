@@ -1,0 +1,46 @@
+{
+  "site_title": "スマ庫",
+
+  "youtube_channels": [
+    "UCJoMRVJFzKwnvPO-xY5V29w",
+    "UC1wbp2hvbSfnhiY14fTd9fg",
+    "UCI13aTPz_ip8lXGpjkGBCow",
+    "UCcXevFPHEeQI1QaDYaZNvoQ",
+    "UCFPaBLxpWvL-1ddHnWEjVdw",
+    "UCWb-TYOIFA5LvEVpy2JBCTA",
+    "UCKek-22lQ2RYMIQZD8NtCCw",
+    "UCuGnLR9zl7t38OTDsx7fgDA",
+    "UC9NGb26s4iszCV3pcRKtd9w",
+    "UC0CNxYESc0khvnecH7pKS2Q",
+    "UC_62yzDG1VUUbjjnUmP4X_w",
+    "UCUllYhRCcjlVUw8DqlBq3zA",
+    "UCMo0JzwgHCZ435K9BAAi8Rg",
+    "UCG-DRzdif4Qi24YDJIsGAeg",
+    "UC-DgOAMR_o3Oi9ijt44--wQ",
+    "UCf_AHbUGK2oQS3iS3HWUswg",
+    "UCfP7zXrwSEHUnjh3F2DfhUA",
+    "UCP54rPveg9o3jq0l_0VnR_w",
+    "UCYEmZia36kLiZ0UFtj-kgbw",
+    "UCj1J3QuIftjOq9iv_rr7Egw",
+    "UCZXqfK9UQoDKRjba-Fu76Ow",
+    "UCcGPLB0s_EmnQBLeJW6DMTQ",
+    "UCLqzIfCONWhHHpKnYQi3yvw",
+    "UCPRnun4myv-BazdIMcF9fEA"
+  ],
+
+  "twitch_channels": [],
+
+  "filter_keywords": [
+    "ドクターマリオ",
+    "ドクマリ",
+    "Dr. Mario",
+    "Dr.Mario",
+    "Dr Mario",
+    "DrMario",
+    "ドクター マリオ"
+  ],
+
+  "require_keyword": true,
+
+  "max_keep": 1000
+}

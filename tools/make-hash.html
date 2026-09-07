@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>スマ庫 合言葉ハッシュ作成ツール</title>
+<style>
+  body { font-family: system-ui, "Yu Gothic", sans-serif; background:#14100f; color:#f5eeee; padding:32px; max-width:640px; margin:auto; }
+  h1 { color:#ff3b4e; font-size:22px; }
+  p { color:#b9a9a9; line-height:1.8; font-size:14px; }
+  input { width:100%; padding:12px; font-size:16px; margin:10px 0; background:#170f0f; color:#fff; border:1px solid #3a2b2b; border-radius:8px; box-sizing:border-box; }
+  .out { background:#211a19; border:1px solid #3a2b2b; border-left:4px solid #d10a1e; border-radius:8px; padding:14px; word-break:break-all; font-family:monospace; font-size:14px; min-height:20px; }
+  button { padding:12px 18px; background:#d10a1e; color:#fff; border:none; border-radius:8px; font-size:15px; cursor:pointer; margin-top:8px; }
+  .step { background:#1c1413; padding:16px; border-radius:8px; margin-top:20px; }
+  code { background:#000; padding:2px 6px; border-radius:4px; }
+</style>
+</head>
+<body>
+  <h1>合言葉の変更ツール（オーナー専用）</h1>
+  <p>新しい合言葉を入力すると、下にハッシュ（暗号化された文字列）が表示されます。
+  それを <code>site-config.js</code> の <code>PASSPHRASE_HASH</code> に貼り付けて保存すれば、合言葉が変わります。</p>
+
+  <input id="pw" type="text" placeholder="新しい合言葉を入力" autofocus>
+  <div class="out" id="out">ここにハッシュが出ます</div>
+  <button id="copy">ハッシュをコピー</button>
+
+  <div class="step">
+    <strong style="color:#ff3b4e">貼り付け方</strong>
+    <p style="margin-bottom:0">
+      <code>site-config.js</code> を開き、<br>
+      <code>PASSPHRASE_HASH: "……"</code> の <code>"……"</code> の中身を、上のハッシュに書き換えて保存 → GitHubにアップ。<br>
+      これでオーナーのあなただけが合言葉を変更できます。
+    </p>
+  </div>
+
+<script>
+const pw = document.getElementById("pw");
+const out = document.getElementById("out");
+async function update() {
+  const v = pw.value;
+  if (!v) { out.textContent = "ここにハッシュが出ます"; return; }
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(v));
+  out.textContent = [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,"0")).join("");
+}
+pw.addEventListener("input", update);
+document.getElementById("copy").addEventListener("click", () => {
+  navigator.clipboard.writeText(out.textContent).then(() => {
+    document.getElementById("copy").textContent = "コピーしました！";
+    setTimeout(() => document.getElementById("copy").textContent = "ハッシュをコピー", 1500);
+  });
+});
+</script>
+</body>
+</html>
