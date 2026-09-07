@@ -18,6 +18,7 @@ import json
 import os
 import re
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -48,6 +49,21 @@ def matches_keywords(text, keywords):
         return True
     low = (text or "").lower()
     return any(k.lower() in low for k in keywords)
+
+
+def parse_views(text):
+    """"1.2万 回視聴" / "1,234回視聴" / "12345" などを整数の再生数に変換。"""
+    if text is None:
+        return 0
+    t = str(text).replace(",", "").replace(" ", "")
+    m = re.search(r"([\d.]+)億", t)
+    if m:
+        return int(float(m.group(1)) * 10**8)
+    m = re.search(r"([\d.]+)万", t)
+    if m:
+        return int(float(m.group(1)) * 10**4)
+    m = re.search(r"(\d+)", t)
+    return int(m.group(1)) if m else 0
 
 
 # ---------------- プレイヤー名マッチャ ----------------
@@ -82,7 +98,7 @@ def tag_players(text, matchers):
     return found
 
 
-def make_video(vid, title, author, published, players):
+def make_video(vid, title, author, published, players, views=0):
     return {
         "source": "youtube",
         "id": vid,
@@ -92,6 +108,7 @@ def make_video(vid, title, author, published, players):
         "url": f"https://www.youtube.com/watch?v={vid}",
         "thumb": f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg",
         "players": players,
+        "views": views,
     }
 
 
@@ -136,22 +153,44 @@ def collect_youtube_channels(channels, keywords, require_kw, matchers):
                 continue
             if require_kw and not matches_keywords(title + " " + desc, keywords):
                 continue
-            out.append(make_video(vid, title, author, published, tag_players(title + " " + desc, matchers)))
+            stats = entry.find("media:group/media:community/media:statistics", NS)
+            views = parse_views(stats.get("views")) if stats is not None else 0
+            out.append(make_video(vid, title, author, published, tag_players(title + " " + desc, matchers), views))
     return out
 
 
 # ---------------- YouTube: プレイヤー名で検索 ----------------
+_API_STOP = False   # クォータ上限に達したら以降のAPI検索を止める
+
+
 def yt_search_api(query, limit, key):
-    url = ("https://www.googleapis.com/youtube/v3/search?part=snippet&type=video"
-           f"&maxResults={min(limit, 50)}&q={urllib.parse.quote(query)}&key={key}")
-    data = json.loads(fetch(url))
+    """公式APIで検索。limit件までページ送り(1ページ最大50件)して深く取得する。"""
+    global _API_STOP
+    if _API_STOP:
+        return []
     hits = []
-    for it in data.get("items", []):
-        vid = it.get("id", {}).get("videoId")
-        sn = it.get("snippet", {})
-        if vid:
-            hits.append((vid, sn.get("title", ""), sn.get("channelTitle", ""),
-                         sn.get("publishedAt", ""), sn.get("channelId", "")))
+    page = None
+    while len(hits) < limit:
+        url = ("https://www.googleapis.com/youtube/v3/search?part=snippet&type=video"
+               f"&maxResults={min(50, limit - len(hits))}&q={urllib.parse.quote(query)}&key={key}")
+        if page:
+            url += "&pageToken=" + page
+        try:
+            data = json.loads(fetch(url))
+        except urllib.error.HTTPError as e:
+            if e.code == 403:
+                _API_STOP = True
+                print("    ! APIの1日の無料枠に達したため、以降のAPI検索を停止します（明日また補完されます）", file=sys.stderr)
+            raise
+        for it in data.get("items", []):
+            vid = it.get("id", {}).get("videoId")
+            sn = it.get("snippet", {})
+            if vid:
+                hits.append((vid, sn.get("title", ""), sn.get("channelTitle", ""),
+                             sn.get("publishedAt", ""), sn.get("channelId", ""), 0))
+        page = data.get("nextPageToken")
+        if not page:
+            break
     return hits
 
 
@@ -179,7 +218,9 @@ def yt_search_keyless(query, limit):
                 chid = ""
                 if runs:
                     chid = runs[0].get("navigationEndpoint", {}).get("browseEndpoint", {}).get("browseId", "")
-                hits.append((vr["videoId"], title, owner, "", chid))
+                vc = vr.get("viewCountText", {})
+                vtext = vc.get("simpleText") or "".join(r.get("text", "") for r in vc.get("runs", []))
+                hits.append((vr["videoId"], title, owner, "", chid, parse_views(vtext)))
             for v in o.values():
                 walk(v)
         elif isinstance(o, list):
@@ -217,7 +258,7 @@ def collect_youtube_search(players, suffix_broad, suffix_dr, per, keywords):
             except Exception as e:
                 print(f"    ! 検索失敗({query}): {e}", file=sys.stderr)
                 continue
-            for vid, title, owner, published, chid in hits:
+            for vid, title, owner, published, chid, views in hits:
                 k = "youtube:" + vid
                 if k in seen:
                     continue
@@ -231,7 +272,7 @@ def collect_youtube_search(players, suffix_broad, suffix_dr, per, keywords):
                 if strict and not tag_players(title, pm):
                     continue
                 seen.add(k)
-                out.append(make_video(vid, title, owner, published, [name]))
+                out.append(make_video(vid, title, owner, published, [name], views))
                 got += 1
 
         # 名前がタイトルに入っているだけの動画も拾う（title_name_match の選手のみ）
@@ -245,7 +286,7 @@ def collect_youtube_search(players, suffix_broad, suffix_dr, per, keywords):
                 except Exception as e:
                     print(f"    ! 名前検索失敗({alias}): {e}", file=sys.stderr)
                     continue
-                for vid, title, owner, published, chid in hits:
+                for vid, title, owner, published, chid, views in hits:
                     k = "youtube:" + vid
                     if k in seen:
                         continue
@@ -254,7 +295,7 @@ def collect_youtube_search(players, suffix_broad, suffix_dr, per, keywords):
                     if not tag_players(title, pm):   # タイトルに名前が無ければ除外
                         continue
                     seen.add(k)
-                    out.append(make_video(vid, title, owner, published, [name]))
+                    out.append(make_video(vid, title, owner, published, [name], views))
                     got += 1
 
         print(f"    ・{name}{'(ドクマリ限定)' if strict else ''}: {got}本")
@@ -290,14 +331,14 @@ def collect_channel_rules(rules, per, matchers):
                 return True
             return False
 
-        def add(vid, title, author, published):
+        def add(vid, title, author, published, views=0):
             nonlocal got
             k = "youtube:" + vid
             if k in seen:
                 return
             seen.add(k)
             players = sorted(set(tags) | set(tag_players(title, matchers)))
-            out.append(make_video(vid, title, author, published, players))
+            out.append(make_video(vid, title, author, published, players, views))
             got += 1
 
         # 1) RSS（最新分）
@@ -312,7 +353,9 @@ def collect_channel_rules(rules, per, matchers):
                     desc = entry.findtext("media:group/media:description", default="", namespaces=NS)
                     if not vid or not title_ok(title + " " + desc):
                         continue
-                    add(vid, title, author, published)
+                    stats = entry.find("media:group/media:community/media:statistics", NS)
+                    views = parse_views(stats.get("views")) if stats is not None else 0
+                    add(vid, title, author, published, views)
             except Exception as e:
                 print(f"    ! ルールRSS失敗({cid}): {e}", file=sys.stderr)
 
@@ -325,12 +368,12 @@ def collect_channel_rules(rules, per, matchers):
                 except Exception as e:
                     print(f"    ! ルール検索失敗({query}): {e}", file=sys.stderr)
                     continue
-                for vid, title, owner, published, chid in hits:
+                for vid, title, owner, published, chid, views in hits:
                     if cid and chid and chid != cid:
                         continue
                     if not title_ok(title):
                         continue
-                    add(vid, title, owner, published)
+                    add(vid, title, owner, published, views)
 
         print(f"  - チャンネルルール[{label}]: {got}本")
     return out
@@ -376,7 +419,7 @@ def collect_twitch(channels, keywords, require_kw, matchers):
             out.append({
                 "source": "twitch", "id": v.get("id"), "title": title, "author": disp,
                 "published": v.get("published_at", ""), "url": v.get("url"), "thumb": thumb,
-                "players": tag_players(title, matchers),
+                "players": tag_players(title, matchers), "views": int(v.get("view_count", 0) or 0),
             })
     return out
 
@@ -413,6 +456,8 @@ def main():
         k = f"{it['source']}:{it['id']}"
         if k in by_key:
             by_key[k]["players"] = sorted(set(by_key[k].get("players", [])) | set(it.get("players", [])))
+            if it.get("views"):
+                by_key[k]["views"] = it["views"]   # 再生数は新しい値で更新
         else:
             by_key[k] = it
 

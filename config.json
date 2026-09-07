@@ -45,7 +45,7 @@
   ],
   "search_suffix_broad": "スマブラ",
   "search_suffix_drmario": "ドクターマリオ",
-  "search_per_player": 20,
+  "search_per_player": 100,
 
   "channel_rules": [
     {
