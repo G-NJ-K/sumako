@@ -31,21 +31,30 @@
   "twitch_channels": [],
 
   "players": [
-    { "name": "つむすと",   "aliases": ["つむすと", "Tsumusuto"],        "dr_mario_only": false },
-    { "name": "AKはにゅ",   "aliases": ["AKはにゅ", "AK hanyu"],          "dr_mario_only": false },
-    { "name": "JaZaR",     "aliases": ["JaZaR", "jazar", "JAZAR"],      "dr_mario_only": false },
-    { "name": "シッショー", "aliases": ["シッショー", "sissyo"],          "dr_mario_only": false },
-    { "name": "KingP",     "aliases": ["KingP"],                        "dr_mario_only": false },
-    { "name": "meo2K",     "aliases": ["meo2K"],                        "dr_mario_only": false },
+    { "name": "つむすと",   "aliases": ["つむすと", "Tsumusuto"],        "dr_mario_only": false, "title_name_match": true },
+    { "name": "AKはにゅ",   "aliases": ["AKはにゅ", "AK hanyu"],          "dr_mario_only": false, "title_name_match": true },
+    { "name": "JaZaR",     "aliases": ["JaZaR", "jazar", "JAZAR"],      "dr_mario_only": false, "title_name_match": true },
+    { "name": "シッショー", "aliases": ["シッショー", "sissyo"],          "dr_mario_only": false, "title_name_match": true },
     { "name": "BacoN",     "aliases": ["BacoN", "BACON", "bacon"],      "dr_mario_only": false },
     { "name": "あcola",    "aliases": ["あcola", "acola"],              "dr_mario_only": true },
     { "name": "スノー",     "aliases": ["スノー", "snow"],               "dr_mario_only": true },
     { "name": "Nao",       "aliases": ["Nao"],                          "dr_mario_only": true },
-    { "name": "ラックス",   "aliases": ["ラックス", "Lax"],              "dr_mario_only": true }
+    { "name": "ラックス",   "aliases": ["ラックス", "Lax"],              "dr_mario_only": true },
+    { "name": "沼井JAPAN",  "aliases": ["沼井JAPAN", "NUMAI JAPAN"],     "dr_mario_only": false, "title_name_match": true, "exclude_channels": ["UCwteVb2DqnTlbWBNCd3Rqog"] }
   ],
   "search_suffix_broad": "スマブラ",
   "search_suffix_drmario": "ドクターマリオ",
-  "search_per_player": 15,
+  "search_per_player": 20,
+
+  "channel_rules": [
+    {
+      "channel": "UC9NGb26s4iszCV3pcRKtd9w",
+      "include_keywords": ["宅オフ"],
+      "tag_players": ["つむすと"],
+      "search": true,
+      "search_prefix": "つむすと"
+    }
+  ],
 
   "filter_keywords": [
     "ドクターマリオ",

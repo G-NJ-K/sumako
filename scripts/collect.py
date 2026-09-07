@@ -150,7 +150,8 @@ def yt_search_api(query, limit, key):
         vid = it.get("id", {}).get("videoId")
         sn = it.get("snippet", {})
         if vid:
-            hits.append((vid, sn.get("title", ""), sn.get("channelTitle", ""), sn.get("publishedAt", "")))
+            hits.append((vid, sn.get("title", ""), sn.get("channelTitle", ""),
+                         sn.get("publishedAt", ""), sn.get("channelId", "")))
     return hits
 
 
@@ -173,8 +174,12 @@ def yt_search_keyless(query, limit):
             vr = o.get("videoRenderer")
             if isinstance(vr, dict) and vr.get("videoId"):
                 title = "".join(r.get("text", "") for r in vr.get("title", {}).get("runs", []))
-                owner = "".join(r.get("text", "") for r in vr.get("ownerText", {}).get("runs", []))
-                hits.append((vr["videoId"], title, owner, ""))
+                runs = vr.get("ownerText", {}).get("runs", [])
+                owner = "".join(r.get("text", "") for r in runs)
+                chid = ""
+                if runs:
+                    chid = runs[0].get("navigationEndpoint", {}).get("browseEndpoint", {}).get("browseId", "")
+                hits.append((vr["videoId"], title, owner, "", chid))
             for v in o.values():
                 walk(v)
         elif isinstance(o, list):
@@ -198,6 +203,7 @@ def collect_youtube_search(players, suffix_broad, suffix_dr, per, keywords):
             continue
         strict = bool(p.get("dr_mario_only"))
         aliases = p.get("aliases") or [name]
+        excluded = set(filter(None, (resolve_channel_id(c) for c in p.get("exclude_channels", []))))
         got = 0
         for alias in aliases:
             alias = (alias or "").strip()
@@ -210,9 +216,11 @@ def collect_youtube_search(players, suffix_broad, suffix_dr, per, keywords):
             except Exception as e:
                 print(f"    ! 検索失敗({query}): {e}", file=sys.stderr)
                 continue
-            for vid, title, owner, published in hits:
+            for vid, title, owner, published, chid in hits:
                 k = "youtube:" + vid
                 if k in seen:
+                    continue
+                if chid and chid in excluded:
                     continue
                 # ドクマリ限定の選手は、タイトルにドクマリ語が無ければ除外
                 # （クエリには常に含まれるため、判定はタイトルのみで行う）
@@ -221,7 +229,98 @@ def collect_youtube_search(players, suffix_broad, suffix_dr, per, keywords):
                 seen.add(k)
                 out.append(make_video(vid, title, owner, published, [name]))
                 got += 1
+
+        # 名前がタイトルに入っているだけの動画も拾う（title_name_match の選手のみ）
+        if p.get("title_name_match"):
+            pm = build_matchers([p])
+            for alias in aliases:
+                alias = (alias or "").strip()
+                if not alias:
+                    continue
+                try:
+                    hits = yt_search_api(alias, per, key) if key else yt_search_keyless(alias, per)
+                except Exception as e:
+                    print(f"    ! 名前検索失敗({alias}): {e}", file=sys.stderr)
+                    continue
+                for vid, title, owner, published, chid in hits:
+                    k = "youtube:" + vid
+                    if k in seen:
+                        continue
+                    if chid and chid in excluded:
+                        continue
+                    if not tag_players(title, pm):   # タイトルに名前が無ければ除外
+                        continue
+                    seen.add(k)
+                    out.append(make_video(vid, title, owner, published, [name]))
+                    got += 1
+
         print(f"    ・{name}{'(ドクマリ限定)' if strict else ''}: {got}本")
+    return out
+
+
+# ---------------- 特定チャンネルの特別ルール ----------------
+def collect_channel_rules(rules, per, matchers):
+    """特定チャンネルで、指定キーワードを含む動画を（ドクマリ判定を無視して）収集し、
+    指定プレイヤーのタグを付ける。例: つむすとの『宅オフ』動画をすべて つむすと タブへ。
+    RSS（最新分）＋ 検索（過去分）の両方で拾う。"""
+    if not rules:
+        return []
+    key = os.environ.get("YOUTUBE_API_KEY")
+    out = []
+    seen = set()
+    for rule in rules:
+        cid = resolve_channel_id(rule.get("channel", ""))
+        inc = rule.get("include_keywords", [])
+        tags = rule.get("tag_players", [])
+        prefix = rule.get("search_prefix", "")
+        label = "/".join(tags) or (cid or "?")
+        got = 0
+
+        def add(vid, title, author, published):
+            nonlocal got
+            k = "youtube:" + vid
+            if k in seen:
+                return
+            seen.add(k)
+            players = sorted(set(tags) | set(tag_players(title, matchers)))
+            out.append(make_video(vid, title, author, published, players))
+            got += 1
+
+        # 1) RSS（最新分）
+        if cid:
+            try:
+                root = ET.fromstring(fetch(f"https://www.youtube.com/feeds/videos.xml?channel_id={cid}"))
+                author = root.findtext("atom:author/atom:name", default="", namespaces=NS)
+                for entry in root.findall("atom:entry", NS):
+                    vid = entry.findtext("yt:videoId", default="", namespaces=NS)
+                    title = entry.findtext("atom:title", default="", namespaces=NS)
+                    published = entry.findtext("atom:published", default="", namespaces=NS)
+                    desc = entry.findtext("media:group/media:description", default="", namespaces=NS)
+                    if not vid:
+                        continue
+                    if inc and not matches_keywords(title + " " + desc, inc):
+                        continue
+                    add(vid, title, author, published)
+            except Exception as e:
+                print(f"    ! ルールRSS失敗({cid}): {e}", file=sys.stderr)
+
+        # 2) 検索（過去分）— 同じチャンネルの結果だけ採用
+        if rule.get("search", True):
+            for kw in inc:
+                query = (prefix + " " + kw).strip()
+                try:
+                    hits = yt_search_api(query, per, key) if key else yt_search_keyless(query, per)
+                except Exception as e:
+                    print(f"    ! ルール検索失敗({query}): {e}", file=sys.stderr)
+                    continue
+                for vid, title, owner, published, chid in hits:
+                    if cid and chid and chid != cid:
+                        continue
+                    if inc and not matches_keywords(title, inc):
+                        continue
+                    add(vid, title, owner, published)
+
+        print(f"  - チャンネルルール[{label}]: {got}本")
     return out
 
 
@@ -295,6 +394,7 @@ def main():
     found = []
     found += collect_youtube_channels(config.get("youtube_channels", []), keywords, require_kw, matchers)
     found += collect_youtube_search(players, suffix_broad, suffix_dr, per, keywords)
+    found += collect_channel_rules(config.get("channel_rules", []), per, matchers)
     found += collect_twitch(config.get("twitch_channels", []), keywords, require_kw, matchers)
 
     for it in found:
