@@ -125,6 +125,30 @@
   .badge.youtube { background: #cc0000; }
   .badge.twitch { background: #9146ff; }
 
+  /* プレイヤー別タブ */
+  nav.tabs {
+    position: sticky; top: 55px; z-index: 9;
+    display: flex; gap: 8px; overflow-x: auto; white-space: nowrap;
+    padding: 10px 20px; background: #1a1211;
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: thin;
+  }
+  nav.tabs button {
+    flex: 0 0 auto; padding: 7px 14px; font-size: 13px; font-weight: 600;
+    color: var(--text-dim); background: #241b1a;
+    border: 1px solid var(--border); border-radius: 999px; cursor: pointer;
+    transition: all .12s;
+  }
+  nav.tabs button:hover { color: #fff; border-color: var(--red-soft); }
+  nav.tabs button.active { color: #fff; background: var(--red); border-color: var(--red); }
+  nav.tabs button .n { opacity: .7; font-weight: 400; margin-left: 4px; font-size: 11px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .chip {
+    font-size: 10px; padding: 2px 7px; border-radius: 999px;
+    background: rgba(209,10,30,.15); color: var(--red-soft); border: 1px solid rgba(209,10,30,.35);
+  }
+
   .empty { text-align: center; color: var(--text-dim); padding: 80px 20px; line-height: 1.9; }
   .empty .big { font-size: 20px; color: var(--text); margin-bottom: 8px; }
 
@@ -163,6 +187,7 @@
       <input class="search" id="search" type="text" placeholder="タイトル検索…">
       <button class="lockbtn" id="lock">ロック</button>
     </header>
+    <nav class="tabs" id="tabs"></nav>
     <main>
       <div class="grid" id="grid"></div>
       <div class="empty" id="empty" style="display:none">
@@ -228,9 +253,12 @@ if (sessionStorage.getItem(UNLOCK_KEY) === "1") openApp();
 
 // ===== 動画一覧 =====
 let allVideos = [];
+let currentPlayer = null;   // null = すべて
+let currentQuery = "";
 const grid = document.getElementById("grid");
 const emptyBox = document.getElementById("empty");
 const countEl = document.getElementById("count");
+const tabsEl = document.getElementById("tabs");
 
 async function loadVideos() {
   try {
@@ -239,11 +267,56 @@ async function loadVideos() {
   } catch (e) {
     allVideos = [];
   }
-  render(allVideos);
+  buildTabs();
+  readHash();
+  markActiveTab();
+  applyFilters();
+}
+
+function buildTabs() {
+  const counts = {};
+  for (const v of allVideos) for (const p of (v.players || [])) counts[p] = (counts[p] || 0) + 1;
+  const players = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || a.localeCompare(b, "ja"));
+  tabsEl.innerHTML = "";
+  const mk = (label, key, n) => {
+    const b = document.createElement("button");
+    b.innerHTML = escapeHtml(label) + (n != null ? ` <span class="n">${n}</span>` : "");
+    b.dataset.player = key === null ? "" : key;
+    b.addEventListener("click", () => selectPlayer(key));
+    tabsEl.appendChild(b);
+  };
+  mk("すべて", null, allVideos.length);
+  for (const p of players) mk(p, p, counts[p]);
+  tabsEl.style.display = players.length === 0 ? "none" : "flex";
+}
+
+function markActiveTab() {
+  for (const b of tabsEl.querySelectorAll("button")) {
+    b.classList.toggle("active", (b.dataset.player || "") === (currentPlayer || ""));
+  }
+}
+
+function selectPlayer(p) {
+  currentPlayer = p;
+  location.hash = p ? "player=" + encodeURIComponent(p) : "";
+  markActiveTab();
+  applyFilters();
+}
+
+function readHash() {
+  const m = location.hash.match(/player=([^&]+)/);
+  currentPlayer = m ? decodeURIComponent(m[1]) : null;
+}
+
+function applyFilters() {
+  let list = allVideos;
+  if (currentPlayer) list = list.filter(v => (v.players || []).includes(currentPlayer));
+  if (currentQuery) list = list.filter(v => (v.title || "").toLowerCase().includes(currentQuery));
+  render(list);
 }
 
 function render(list) {
-  countEl.textContent = allVideos.length ? allVideos.length + " 本" : "";
+  countEl.textContent = allVideos.length ? (list.length + " / " + allVideos.length + " 本") : "";
   grid.innerHTML = "";
   // 動画が1本もない(自動収集前)ときだけ案内を表示
   emptyBox.style.display = allVideos.length === 0 ? "block" : "none";
@@ -252,6 +325,8 @@ function render(list) {
     card.className = "card";
     const src = v.source === "twitch" ? "twitch" : "youtube";
     const label = src === "twitch" ? "Twitch" : "YouTube";
+    const chips = (v.players || []).length
+      ? `<div class="chips">${v.players.map(p => `<span class="chip">${escapeHtml(p)}</span>`).join("")}</div>` : "";
     card.innerHTML = `
       <div class="thumb">
         <span class="badge ${src}">${label}</span>
@@ -261,6 +336,7 @@ function render(list) {
       <div class="meta">
         <p class="title">${escapeHtml(v.title)}</p>
         <div class="sub">${escapeHtml(v.author || "")}${v.published ? " ・ " + v.published.slice(0,10) : ""}</div>
+        ${chips}
       </div>`;
     card.addEventListener("click", () => play(v));
     grid.appendChild(card);
@@ -273,9 +349,10 @@ function escapeHtml(s) {
 
 // ===== 検索 =====
 document.getElementById("search").addEventListener("input", e => {
-  const q = e.target.value.trim().toLowerCase();
-  render(q ? allVideos.filter(v => (v.title || "").toLowerCase().includes(q)) : allVideos);
+  currentQuery = e.target.value.trim().toLowerCase();
+  applyFilters();
 });
+window.addEventListener("hashchange", () => { readHash(); markActiveTab(); applyFilters(); });
 
 // ===== 再生モーダル =====
 const modal = document.getElementById("modal");
