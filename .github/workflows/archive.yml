@@ -2,7 +2,7 @@ name: 動画を自動収集
 
 on:
   schedule:
-    - cron: "0 */3 * * *"
+    - cron: "0 3 * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -22,6 +22,7 @@ jobs:
 
       - name: 収集スクリプトを実行
         env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
         run: python scripts/collect.py
