@@ -204,6 +204,7 @@ def collect_youtube_search(players, suffix_broad, suffix_dr, per, keywords):
         strict = bool(p.get("dr_mario_only"))
         aliases = p.get("aliases") or [name]
         excluded = set(filter(None, (resolve_channel_id(c) for c in p.get("exclude_channels", []))))
+        pm = build_matchers([p])   # この選手の名前(別名含む)判定用
         got = 0
         for alias in aliases:
             alias = (alias or "").strip()
@@ -226,13 +227,15 @@ def collect_youtube_search(players, suffix_broad, suffix_dr, per, keywords):
                 # （クエリには常に含まれるため、判定はタイトルのみで行う）
                 if strict and keywords and not matches_keywords(title, keywords):
                     continue
+                # ドクマリ限定の選手は、タイトルに本人名も無ければ除外（無関係な一般ドクマリ動画の誤登録を防ぐ）
+                if strict and not tag_players(title, pm):
+                    continue
                 seen.add(k)
                 out.append(make_video(vid, title, owner, published, [name]))
                 got += 1
 
         # 名前がタイトルに入っているだけの動画も拾う（title_name_match の選手のみ）
         if p.get("title_name_match"):
-            pm = build_matchers([p])
             for alias in aliases:
                 alias = (alias or "").strip()
                 if not alias:
@@ -270,11 +273,22 @@ def collect_channel_rules(rules, per, matchers):
     seen = set()
     for rule in rules:
         cid = resolve_channel_id(rule.get("channel", ""))
-        inc = rule.get("include_keywords", [])
+        inc = rule.get("include_keywords", [])          # 部分一致（例: 宅オフ, メイト）
+        inc_players = rule.get("include_players", [])    # 単語一致（例: mat。matchには反応しない）
+        pm = build_matchers([{"name": x, "aliases": [x]} for x in inc_players]) if inc_players else []
         tags = rule.get("tag_players", [])
         prefix = rule.get("search_prefix", "")
         label = "/".join(tags) or (cid or "?")
         got = 0
+
+        def title_ok(text):
+            if not inc and not inc_players:
+                return True
+            if inc and matches_keywords(text, inc):
+                return True
+            if inc_players and tag_players(text, pm):
+                return True
+            return False
 
         def add(vid, title, author, published):
             nonlocal got
@@ -296,9 +310,7 @@ def collect_channel_rules(rules, per, matchers):
                     title = entry.findtext("atom:title", default="", namespaces=NS)
                     published = entry.findtext("atom:published", default="", namespaces=NS)
                     desc = entry.findtext("media:group/media:description", default="", namespaces=NS)
-                    if not vid:
-                        continue
-                    if inc and not matches_keywords(title + " " + desc, inc):
+                    if not vid or not title_ok(title + " " + desc):
                         continue
                     add(vid, title, author, published)
             except Exception as e:
@@ -306,8 +318,8 @@ def collect_channel_rules(rules, per, matchers):
 
         # 2) 検索（過去分）— 同じチャンネルの結果だけ採用
         if rule.get("search", True):
-            for kw in inc:
-                query = (prefix + " " + kw).strip()
+            for term in (inc + inc_players):
+                query = (prefix + " " + term).strip()
                 try:
                     hits = yt_search_api(query, per, key) if key else yt_search_keyless(query, per)
                 except Exception as e:
@@ -316,7 +328,7 @@ def collect_channel_rules(rules, per, matchers):
                 for vid, title, owner, published, chid in hits:
                     if cid and chid and chid != cid:
                         continue
-                    if inc and not matches_keywords(title, inc):
+                    if not title_ok(title):
                         continue
                     add(vid, title, owner, published)
 

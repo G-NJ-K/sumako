@@ -40,7 +40,8 @@
     { "name": "スノー",     "aliases": ["スノー", "snow"],               "dr_mario_only": true },
     { "name": "Nao",       "aliases": ["Nao"],                          "dr_mario_only": true },
     { "name": "ラックス",   "aliases": ["ラックス", "Lax"],              "dr_mario_only": true },
-    { "name": "沼井JAPAN",  "aliases": ["沼井JAPAN", "NUMAI JAPAN"],     "dr_mario_only": false, "title_name_match": true, "exclude_channels": ["UCwteVb2DqnTlbWBNCd3Rqog"] }
+    { "name": "沼井JAPAN",  "aliases": ["沼井JAPAN", "NUMAI JAPAN"],     "dr_mario_only": false, "title_name_match": true, "exclude_channels": ["UCwteVb2DqnTlbWBNCd3Rqog"] },
+    { "name": "YOPI",      "aliases": ["YOPI", "だんごむし", "MiiBrawlerGod"], "dr_mario_only": true }
   ],
   "search_suffix_broad": "スマブラ",
   "search_suffix_drmario": "ドクターマリオ",
@@ -60,6 +61,27 @@
       "tag_players": ["AKはにゅ"],
       "search": true,
       "search_prefix": "AKはにゅ"
+    },
+    {
+      "channel": "UC14VoVHVZ806DNBauiLMMyQ",
+      "include_keywords": ["ドクマリ", "ドクターマリオ", "メイト", "スマメイト"],
+      "tag_players": ["YOPI"],
+      "search": true,
+      "search_prefix": "だんごむし"
+    },
+    {
+      "channel": "UCI13aTPz_ip8lXGpjkGBCow",
+      "include_players": ["mat"],
+      "tag_players": ["mat"],
+      "search": true,
+      "search_prefix": "タミスマ"
+    },
+    {
+      "channel": "UC1wbp2hvbSfnhiY14fTd9fg",
+      "include_players": ["mat"],
+      "tag_players": ["mat"],
+      "search": true,
+      "search_prefix": "まえだくん"
     }
   ],
 
