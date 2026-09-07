@@ -7,7 +7,7 @@
 
 window.SUMAKO_CONFIG = {
   // 合言葉(smashbros)のSHA-256ハッシュ
-  PASSPHRASE_HASH: "ea5bd47f8c05cadc730c696c5c0fe8d80a1676c0d67845a2dfb18c8201a05051",
+  PASSPHRASE_HASH: "aeb094705b629ea0312371ad1060e3b22e4bbb640875d3b27f56a7582d254d02",
 
   // サイトのタイトル
   SITE_TITLE: "スマ庫",
