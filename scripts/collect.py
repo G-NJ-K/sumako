@@ -416,6 +416,20 @@ def main():
         else:
             by_key[k] = it
 
+    # 設定に無くなった選手のタグを掃除（例: 削除したKingP/meo2Kのタブを消す）
+    valid_tags = set(p.get("name") for p in players if p.get("name"))
+    for rule in config.get("channel_rules", []):
+        valid_tags |= set(rule.get("tag_players", []))
+    cleaned = {}
+    for k, v in by_key.items():
+        orig = v.get("players", [])
+        newp = [p for p in orig if p in valid_tags]
+        if orig and not newp:
+            continue  # その選手専用に集めた動画 → まるごと削除
+        v["players"] = newp
+        cleaned[k] = v
+    by_key = cleaned
+
     merged = list(by_key.values())
     merged.sort(key=lambda v: v.get("published", ""), reverse=True)
     merged = merged[:max_keep]
