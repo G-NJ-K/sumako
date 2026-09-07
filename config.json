@@ -49,10 +49,17 @@
   "channel_rules": [
     {
       "channel": "UC9NGb26s4iszCV3pcRKtd9w",
-      "include_keywords": ["宅オフ"],
+      "include_keywords": ["宅オフ", "たくおふ", "メイト", "スマメイト"],
       "tag_players": ["つむすと"],
       "search": true,
       "search_prefix": "つむすと"
+    },
+    {
+      "channel": "UCWb-TYOIFA5LvEVpy2JBCTA",
+      "include_keywords": ["メイト", "スマメイト"],
+      "tag_players": ["AKはにゅ"],
+      "search": true,
+      "search_prefix": "AKはにゅ"
     }
   ],
 
