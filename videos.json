@@ -1,6 +1,19 @@
 [
   {
     "source": "youtube",
+    "id": "bFdwjGEO7j0",
+    "title": "ふぁなぎの優しい男ポッドキャスト #4「うんこの話をし始めて突然便意を催す男、沼井JAPAN」",
+    "author": "ふぁなぎ",
+    "published": "2026-11-18T13:00:26Z",
+    "url": "https://www.youtube.com/watch?v=bFdwjGEO7j0",
+    "thumb": "https://i.ytimg.com/vi/bFdwjGEO7j0/hqdefault.jpg",
+    "players": [
+      "沼井JAPAN"
+    ],
+    "views": 0
+  },
+  {
+    "source": "youtube",
     "id": "jlefiwRy2Mk",
     "title": "JaZaR vs Brian #smashbros #smashbros #ssbu #detrimenttournament #hazbolgaming",
     "author": "HazBoL_gaming",
@@ -372,7 +385,7 @@
     "players": [
       "AKはにゅ"
     ],
-    "views": 7
+    "views": 8
   },
   {
     "source": "youtube",
@@ -2197,7 +2210,7 @@
     "players": [
       "JaZaR"
     ],
-    "views": 36
+    "views": 37
   },
   {
     "source": "youtube",
@@ -4630,6 +4643,19 @@
     "thumb": "https://i.ytimg.com/vi/sj1O7lMnW4U/hqdefault.jpg",
     "players": [
       "BacoN"
+    ],
+    "views": 0
+  },
+  {
+    "source": "youtube",
+    "id": "EuJBVW3cBiI",
+    "title": "ドクマリのキャラ相性 ソニック編【スマブラSP】",
+    "author": "コンコヌゆっくり実況",
+    "published": "2026-05-16T08:00:17Z",
+    "url": "https://www.youtube.com/watch?v=EuJBVW3cBiI",
+    "thumb": "https://i.ytimg.com/vi/EuJBVW3cBiI/hqdefault.jpg",
+    "players": [
+      "JaZaR"
     ],
     "views": 0
   },
@@ -11835,7 +11861,7 @@
     "players": [
       "YOPI"
     ],
-    "views": 590
+    "views": 591
   },
   {
     "source": "youtube",
@@ -11848,7 +11874,7 @@
     "players": [
       "YOPI"
     ],
-    "views": 535
+    "views": 536
   },
   {
     "source": "youtube",
@@ -26012,33 +26038,6 @@
     "thumb": "https://i.ytimg.com/vi/xrtMvLcl3Fc/hqdefault.jpg",
     "players": [
       "BacoN"
-    ],
-    "views": 0
-  },
-  {
-    "source": "youtube",
-    "id": "YLWbGI5EuiU",
-    "title": "謎のスマホゲーム実況してみたw【Bacon】#shorts #bacon",
-    "author": "じぇいど",
-    "published": "2022-04-04T06:00:10Z",
-    "url": "https://www.youtube.com/watch?v=YLWbGI5EuiU",
-    "thumb": "https://i.ytimg.com/vi/YLWbGI5EuiU/hqdefault.jpg",
-    "players": [
-      "BacoN"
-    ],
-    "views": 0
-  },
-  {
-    "source": "youtube",
-    "id": "sb0gEg0cLak",
-    "title": "マエスマ1on1#318.5&quot;3on3団体戦&quot;[1回戦] Fane＆だんごむし＆mat VS とす＆Mani＆ろぐ #スマブラSP #マエスマ【オンライン大会/SSBU】",
-    "author": "まえだくん",
-    "published": "2022-03-31T09:16:41Z",
-    "url": "https://www.youtube.com/watch?v=sb0gEg0cLak",
-    "thumb": "https://i.ytimg.com/vi/sb0gEg0cLak/hqdefault.jpg",
-    "players": [
-      "YOPI",
-      "mat"
     ],
     "views": 0
   }
