@@ -1,6 +1,32 @@
 [
   {
     "source": "youtube",
+    "id": "Zs-EB0rkATE",
+    "title": "Hazard Zone 18 feat. JaZaR, Kiyarash, ROBOT3050, Gaius, phobiac, and more!",
+    "author": "HazBoL_gaming",
+    "published": "2026-11-23T20:00:16Z",
+    "url": "https://www.youtube.com/watch?v=Zs-EB0rkATE",
+    "thumb": "https://i.ytimg.com/vi/Zs-EB0rkATE/hqdefault.jpg",
+    "players": [
+      "JaZaR"
+    ],
+    "views": 0
+  },
+  {
+    "source": "youtube",
+    "id": "NNbV8ck4yV8",
+    "title": "JaZar vs Nimrod #smashbros #supersmashbros #ssbu #detrimenttourney #hazbolgaming",
+    "author": "HazBoL_gaming",
+    "published": "2026-11-23T16:13:41Z",
+    "url": "https://www.youtube.com/watch?v=NNbV8ck4yV8",
+    "thumb": "https://i.ytimg.com/vi/NNbV8ck4yV8/hqdefault.jpg",
+    "players": [
+      "JaZaR"
+    ],
+    "views": 0
+  },
+  {
+    "source": "youtube",
     "id": "bUwcf7kT97E",
     "title": "JaZaR vs SH-Rick #smashbros #supersmashbros #ssbu #detrimenttournament #hazbolgaming",
     "author": "HazBoL_gaming",
@@ -5949,6 +5975,19 @@
   },
   {
     "source": "youtube",
+    "id": "4-3dztyTGDw",
+    "title": "Matt and Napoleon want to play some Smash Bros on Nintendo GameCube. #gamecube #nintendogamecub",
+    "author": "Goecke Yoshiyama",
+    "published": "2026-02-07T15:14:53Z",
+    "url": "https://www.youtube.com/watch?v=4-3dztyTGDw",
+    "thumb": "https://i.ytimg.com/vi/4-3dztyTGDw/hqdefault.jpg",
+    "players": [
+      "BacoN"
+    ],
+    "views": 0
+  },
+  {
+    "source": "youtube",
     "id": "tnwji1fDFjA",
     "title": "回転斬りが最高すぎる動画 #スマブラsp # #剣術mii #ずんだもん #shorts",
     "author": "よしだよしお",
@@ -7179,6 +7218,7 @@
     "url": "https://www.youtube.com/watch?v=ORsDemyXEcY",
     "thumb": "https://i.ytimg.com/vi/ORsDemyXEcY/hqdefault.jpg",
     "players": [
+      "BacoN",
       "JaZaR"
     ],
     "views": 0
@@ -11638,7 +11678,8 @@
     "url": "https://www.youtube.com/watch?v=iCIZXKD3bns",
     "thumb": "https://i.ytimg.com/vi/iCIZXKD3bns/hqdefault.jpg",
     "players": [
-      "JaZaR"
+      "JaZaR",
+      "シッショー"
     ],
     "views": 0
   },
@@ -11979,7 +12020,7 @@
     "players": [
       "YOPI"
     ],
-    "views": 1200
+    "views": 1203
   },
   {
     "source": "youtube",
@@ -13375,7 +13416,7 @@
     "players": [
       "YOPI"
     ],
-    "views": 966
+    "views": 967
   },
   {
     "source": "youtube",
@@ -15250,7 +15291,7 @@
     "players": [
       "YOPI"
     ],
-    "views": 190
+    "views": 192
   },
   {
     "source": "youtube",
@@ -26001,45 +26042,6 @@
     "thumb": "https://i.ytimg.com/vi/CnhVrpjrUfA/hqdefault.jpg",
     "players": [
       "BacoN"
-    ],
-    "views": 0
-  },
-  {
-    "source": "youtube",
-    "id": "uIY6Qf3VLNQ",
-    "title": "[スマブラSP]ｷｭｲﾝｷｭｷｭｷｭｲｰnﾋﾟｷｰﾝ‼︎‼︎ #shorts",
-    "author": "つむすと",
-    "published": "2022-04-28T00:42:02Z",
-    "url": "https://www.youtube.com/watch?v=uIY6Qf3VLNQ",
-    "thumb": "https://i.ytimg.com/vi/uIY6Qf3VLNQ/hqdefault.jpg",
-    "players": [
-      "つむすと"
-    ],
-    "views": 0
-  },
-  {
-    "source": "youtube",
-    "id": "_Ii74zhdOTs",
-    "title": "デスマメイト",
-    "author": "つむすと",
-    "published": "2022-04-27T07:50:01Z",
-    "url": "https://www.youtube.com/watch?v=_Ii74zhdOTs",
-    "thumb": "https://i.ytimg.com/vi/_Ii74zhdOTs/hqdefault.jpg",
-    "players": [
-      "つむすと"
-    ],
-    "views": 0
-  },
-  {
-    "source": "youtube",
-    "id": "f1a1W8crho0",
-    "title": "【スマブラSP】第4000000回タミスマ！！",
-    "author": "AKはにゅ",
-    "published": "2022-04-27T00:07:24Z",
-    "url": "https://www.youtube.com/watch?v=f1a1W8crho0",
-    "thumb": "https://i.ytimg.com/vi/f1a1W8crho0/hqdefault.jpg",
-    "players": [
-      "AKはにゅ"
     ],
     "views": 0
   }
