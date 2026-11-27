@@ -2601,7 +2601,7 @@
     "players": [
       "つむすと"
     ],
-    "views": 439
+    "views": 440
   },
   {
     "source": "youtube",
@@ -8016,7 +8016,8 @@
     "url": "https://www.youtube.com/watch?v=GrFN_LohQSE",
     "thumb": "https://i.ytimg.com/vi/GrFN_LohQSE/hqdefault.jpg",
     "players": [
-      "JaZaR"
+      "JaZaR",
+      "つむすと"
     ],
     "views": 0
   },
@@ -12204,7 +12205,7 @@
     "players": [
       "YOPI"
     ],
-    "views": 1206
+    "views": 1209
   },
   {
     "source": "youtube",
@@ -12243,7 +12244,7 @@
     "players": [
       "YOPI"
     ],
-    "views": 591
+    "views": 593
   },
   {
     "source": "youtube",
@@ -19339,6 +19340,19 @@
   },
   {
     "source": "youtube",
+    "id": "MWi0hZ7-hYo",
+    "title": "【スマブラSP】ドクマリ技解説 『上B』#shorts",
+    "author": "コンコヌゆっくり実況",
+    "published": "2023-06-28T08:00:19Z",
+    "url": "https://www.youtube.com/watch?v=MWi0hZ7-hYo",
+    "thumb": "https://i.ytimg.com/vi/MWi0hZ7-hYo/hqdefault.jpg",
+    "players": [
+      "JaZaR"
+    ],
+    "views": 0
+  },
+  {
+    "source": "youtube",
     "id": "RE-Wjlh0IaY",
     "title": "Goes Through Banana 🙃",
     "author": "BACON TTYD 😉 ",
@@ -23606,6 +23620,19 @@
   },
   {
     "source": "youtube",
+    "id": "x9pvOuSgGY4",
+    "title": "【まるで隕石！？】メラゾーマを直角に曲げてみたww【スマブラSP】",
+    "author": "スマブラおつまみチャンネル",
+    "published": "2022-09-21T08:00:30Z",
+    "url": "https://www.youtube.com/watch?v=x9pvOuSgGY4",
+    "thumb": "https://i.ytimg.com/vi/x9pvOuSgGY4/hqdefault.jpg",
+    "players": [
+      "つむすと"
+    ],
+    "views": 0
+  },
+  {
+    "source": "youtube",
     "id": "K5f_6OV844Q",
     "title": "ユナイトからスマメイトやる予定",
     "author": "つむすと",
@@ -26020,32 +26047,6 @@
     "published": "2022-05-23T01:59:00Z",
     "url": "https://www.youtube.com/watch?v=KC-JoFptzk0",
     "thumb": "https://i.ytimg.com/vi/KC-JoFptzk0/hqdefault.jpg",
-    "players": [
-      "BacoN"
-    ],
-    "views": 0
-  },
-  {
-    "source": "youtube",
-    "id": "QP8Dqy20tyM",
-    "title": "【スマブラSP】専用部屋配信【視聴者参加型】",
-    "author": "MOT !",
-    "published": "2022-05-22T20:15:23Z",
-    "url": "https://www.youtube.com/watch?v=QP8Dqy20tyM",
-    "thumb": "https://i.ytimg.com/vi/QP8Dqy20tyM/hqdefault.jpg",
-    "players": [
-      "BacoN"
-    ],
-    "views": 0
-  },
-  {
-    "source": "youtube",
-    "id": "vl8Zj8m5eao",
-    "title": "続・マリオ＆ルイージスマメイト【スマブラSP】",
-    "author": "ロン",
-    "published": "2022-05-22T15:03:39Z",
-    "url": "https://www.youtube.com/watch?v=vl8Zj8m5eao",
-    "thumb": "https://i.ytimg.com/vi/vl8Zj8m5eao/hqdefault.jpg",
     "players": [
       "BacoN"
     ],
